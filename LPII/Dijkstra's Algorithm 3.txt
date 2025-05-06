@@ -1,0 +1,63 @@
+import heapq
+
+def dijkstra(graph, start):
+    # Distance to all nodes initially infinity
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+
+    # Priority queue to get the node with the smallest distance
+    pq = [(0, start)]
+
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+
+        # Skip if we already found a better path
+        if current_distance > distances[current_node]:
+            continue
+
+        for neighbor, weight in graph[current_node]:
+            distance = current_distance + weight
+
+            # If new distance is smaller, update it
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(pq, (distance, neighbor))
+
+    return distances
+
+def accept_graph():
+    graph = {}
+    
+    n = int(input("Enter the number of nodes: "))
+    
+    # Initialize graph with empty lists for each node
+    for _ in range(n):
+        node = input("Enter node name: ")
+        graph[node] = []
+
+    edges = int(input("Enter the number of edges: "))
+    
+    for _ in range(edges):
+        node1 = input("Enter the first node of the edge: ")
+        node2 = input("Enter the second node of the edge: ")
+        weight = int(input(f"Enter the weight of the edge between {node1} and {node2}: "))
+        
+        # Add both directions because the graph is undirected
+        graph[node1].append((node2, weight))
+        graph[node2].append((node1, weight))
+
+    return graph
+
+# Accept graph from the user
+graph = accept_graph()
+
+# Take the start node as input from the user
+start_node = input("Enter the start node for Dijkstra's algorithm: ")
+
+# Run Dijkstra from the user-defined start node
+distances = dijkstra(graph, start_node)
+
+# Output the results
+print("\nShortest distances from", start_node + ":")
+for node in distances:
+    print(f"{node}: {distances[node]}")

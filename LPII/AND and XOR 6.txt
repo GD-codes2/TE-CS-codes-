@@ -1,0 +1,31 @@
+def Xor(str1, len1):
+    # Store value of the first character's ASCII
+    ans = ord(str1[0])
+    for i in range(1, len1):
+        # XOR with each character's ASCII
+        ans ^= ord(str1[i])
+    return ans
+
+def And(str1, len1):
+    # Store value of the first character's ASCII
+    ans = ord(str1[0])
+    for i in range(1, len1):
+        # AND with each character's ASCII
+        ans &= ord(str1[i])
+    return ans
+
+def Or(str1, len1):
+    # Store value of the first character's ASCII
+    ans = ord(str1[0])
+    for i in range(1, len1):
+        # OR with each character's ASCII
+        ans |= ord(str1[i])
+    return ans
+
+# Driver code
+str1 = input("Enter your value: ")
+len1 = len(str1)
+
+print("XOR:", Xor(str1, len1))
+print("AND:", And(str1, len1))
+print("OR :", Or(str1, len1))

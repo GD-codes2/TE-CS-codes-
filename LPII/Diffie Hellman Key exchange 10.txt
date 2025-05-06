@@ -1,0 +1,76 @@
+<!-- write a program to implement the Diffie-Hellman key exchange mechanism using HTML and JavaScript. Consider the end user as one of the parties 
+(Alice) and the JavaScript application as other party (bob). -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Diffie-Hellman Key Exchange</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      input,
+      button {
+        margin: 5px 0;
+        padding: 8px;
+      }
+      .result {
+        margin-top: 20px;
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Diffie-Hellman Key Exchange</h2>
+    <label>Prime number (p):</label><br />
+    <input type="number" id="prime" value="23" /><br />
+    <label>Primitive root (g):</label><br />
+    <input type="number" id="base" value="5" /><br />
+    <label>Your private key (Alice's secret a):</label><br />
+    <input type="number" id="alicePrivate" /><br />
+    <button onclick="performKeyExchange()">Exchange Keys</button>
+    <div class="result" id="output"></div>
+    <script>
+      function modPow(base, exponent, modulus) {
+        if (modulus === 1) return 0;
+        let result = 1;
+        base = base % modulus;
+        while (exponent > 0) {
+          if (exponent % 2 === 1) {
+            result = (result * base) % modulus;
+          }
+          exponent = exponent >> 1;
+          base = (base * base) % modulus;
+        }
+        return result;
+      }
+      function performKeyExchange() {
+        const p = parseInt(document.getElementById("prime").value);
+        const g = parseInt(document.getElementById("base").value);
+        const a = parseInt(document.getElementById("alicePrivate").value);
+        if (!a || a <= 0) {
+          alert("Please enter a valid private key for Alice.");
+          return;
+        }
+        const A = modPow(g, a, p);
+        const b = Math.floor(Math.random() * (p - 2)) + 2;
+        const B = modPow(g, b, p);
+        const aliceShared = modPow(B, a, p);
+        const bobShared = modPow(A, b, p);
+        const output = document.getElementById("output");
+        output.innerHTML = `
+        <strong>Bob's secret key (b):</strong> ${b}<br>
+        <strong>Alice sends A = g^a mod p:</strong> ${A}<br>
+        <strong>Bob sends B = g^b mod p:</strong> ${B}<br>
+        <strong>Alice computes shared secret:</strong> ${aliceShared}<br>
+        <strong>Bob computes shared secret:</strong> ${bobShared}<br>
+        <strong>✅ Shared secrets match:</strong> ${aliceShared === bobShared}
+      `;
+      }
+    </script>
+  </body>
+</html>

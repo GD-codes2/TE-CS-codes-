@@ -1,0 +1,65 @@
+import math
+
+def order_key(key):
+    """Get order of columns based on alphabetical sorting of the key."""
+    return sorted(range(len(key)), key=lambda k: key[k])
+
+def encryptMessage(key, message):
+    key_order = order_key(key)
+    num_cols = len(key)
+    num_rows = math.ceil(len(message) / num_cols)
+
+    # Pad the message with X to fit the rectangle
+    padded_length = num_rows * num_cols
+    message += 'X' * (padded_length - len(message))
+
+    # Create the matrix row-wise
+    matrix = [list(message[i:i+num_cols]) for i in range(0, len(message), num_cols)]
+
+    # Read columns in the order of the sorted key
+    ciphertext = ''
+    for index in key_order:
+        for row in matrix:
+            ciphertext += row[index]
+    return ciphertext
+
+def decryptMessage(key, ciphertext):
+    key_order = order_key(key)
+    num_cols = len(key)
+    num_rows = math.ceil(len(ciphertext) / num_cols)
+    num_full_cols = len(ciphertext) % num_cols
+
+    # Calculate the number of characters in each column
+    col_lengths = [num_rows] * num_cols
+    if num_full_cols != 0:
+        for i in range(num_cols - num_full_cols):
+            col_lengths[key_order[-(i+1)]] -= 1
+
+    # Fill each column based on sorted key order
+    cols = [''] * num_cols
+    pos = 0
+    for idx in key_order:
+        length = col_lengths[idx]
+        cols[idx] = ciphertext[pos:pos+length]
+        pos += length
+
+    # Read off the plaintext row-wise
+    plaintext = ''
+    for row in range(num_rows):
+        for col in range(num_cols):
+            if row < len(cols[col]):
+                plaintext += cols[col][row]
+    return plaintext
+
+# --- Main Program ---
+message = input("Enter the message to encrypt: ").replace(" ", "").upper()
+key = input("Enter the keyword: ").upper()
+
+print("\nEncryption Process starts...")
+print("Plain Text is:", message)
+ciphertext = encryptMessage(key, message)
+print("Cipher Text is:", ciphertext)
+
+print("\nDecryption Process starts...")
+decrypted = decryptMessage(key, ciphertext)
+print("Decrypted Plain Text is:", decrypted)

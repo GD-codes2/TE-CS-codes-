@@ -1,0 +1,38 @@
+from Crypto.Cipher import DES
+from Crypto.Util.Padding import pad, unpad
+
+# Function to encrypt a message using DES
+def des_encrypt(plain_text, key):
+    key = key[:8].encode('utf-8')  # Ensure the key is 8 bytes long
+    des = DES.new(key, DES.MODE_ECB)  # Using ECB mode (can be insecure for real-world use)
+    padded_text = pad(plain_text.encode('utf-8'), DES.block_size)  # Pad the text to fit DES block size
+    encrypted_text = des.encrypt(padded_text)  # Encrypt the padded message
+    return encrypted_text
+
+# Function to decrypt a message using DES
+def des_decrypt(encrypted_text, key):
+    key = key[:8].encode('utf-8')  # Ensure the key is 8 bytes long
+    des = DES.new(key, DES.MODE_ECB)  # Using ECB mode
+    decrypted_padded_text = des.decrypt(encrypted_text)  # Decrypt the message
+    decrypted_text = unpad(decrypted_padded_text, DES.block_size)  # Unpad the decrypted text
+    return decrypted_text.decode('utf-8')
+
+# Main Program: Enter a message and a key
+if __name__ == "__main__":
+    message = input("Enter the message to encrypt: ")
+    key = input("Enter the key (must be at least 8 characters long): ")
+
+    if len(key) < 8:
+        print("Key must be at least 8 characters long. Truncating to 8 characters.")
+    
+    print(f"Original Message: {message}")
+
+    encrypted = des_encrypt(message, key)
+    print(f"Encrypted (bytes): {encrypted}")
+    print(f"Encrypted (hex): {encrypted.hex()}")
+
+    decrypted = des_decrypt(encrypted, key)
+    print(f"Decrypted Message: {decrypted}")
+
+# download this on command prompt before running the code
+# pip install pycryptodome 
